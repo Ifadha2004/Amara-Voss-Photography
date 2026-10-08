@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amara Voss Photography</title>
+  <meta name="description" content="Portrait and landscape photography portfolio of Amara Voss.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 1. HEADER: logo is a link, NOT a heading, so the page keeps one h1 -->
+  <header class="site-header">
+    <a class="logo" href="#home">Amara<span>.</span>Voss</a>
+    <nav aria-label="Main" class="main-nav">
+      <ul class="nav-list">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a class="btn btn-small nav-cta" href="#contact">Book a shoot</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- 2. HERO: the only h1 -->
+    <section id="home" class="hero">
+      <div class="hero-inner">
+        <h1>Amara Voss Photography</h1>
+        <p class="tagline">Portraits and landscapes shaped by patient light.</p>
+        <a class="btn" href="#work">View my work</a>
+      </div>
+    </section>
+
+    <!-- 3. GALLERY: CSS Grid -->
+    <section id="work" class="section">
+      <h2>Selected work</h2>
+      <div class="gallery">
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait1/800/1000" alt="Portrait photograph: Golden hour" loading="lazy">
+          <figcaption><span>Golden hour</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land1/800/1000" alt="Landscape photograph: Quiet ridge" loading="lazy">
+          <figcaption><span>Quiet ridge</span><small>Landscape</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait2/800/1000" alt="Portrait photograph: Studio light" loading="lazy">
+          <figcaption><span>Studio light</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land2/800/1000" alt="Landscape photograph: Coastline" loading="lazy">
+          <figcaption><span>Coastline</span><small>Landscape</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait3/800/1000" alt="Portrait photograph: Window study" loading="lazy">
+          <figcaption><span>Window study</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land3/800/1000" alt="Landscape photograph: Misty valley" loading="lazy">
+          <figcaption><span>Misty valley</span><small>Landscape</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait4/800/1000" alt="Portrait photograph: Street candid" loading="lazy">
+          <figcaption><span>Street candid</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land4/800/1000" alt="Landscape photograph: Desert dusk" loading="lazy">
+          <figcaption><span>Desert dusk</span><small>Landscape</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait5/800/1000" alt="Portrait photograph: Soft shadow" loading="lazy">
+          <figcaption><span>Soft shadow</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land5/800/1000" alt="Landscape photograph: Northern lake" loading="lazy">
+          <figcaption><span>Northern lake</span><small>Landscape</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/portrait6/800/1000" alt="Portrait photograph: Editorial" loading="lazy">
+          <figcaption><span>Editorial</span><small>Portrait</small></figcaption>
+        </figure>
+        <figure class="card">
+          <img src="https://picsum.photos/seed/land6/800/1000" alt="Landscape photograph: Mountain pass" loading="lazy">
+          <figcaption><span>Mountain pass</span><small>Landscape</small></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 4. ABOUT: Flexbox -->
+    <section id="about" class="section">
+      <div class="about">
+        <img class="about-photo" src="https://picsum.photos/seed/amara-about/700/700" alt="Portrait of photographer Amara Voss holding a camera">
+        <div class="about-text">
+          <h2>About</h2>
+          <p>I'm Amara, a portrait and landscape photographer based in Dubai. I chase soft light, quiet moments and places that feel unhurried.</p>
+          <p>Available for portrait sessions, family shoots and commissioned landscape work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CONTACT: Flexbox form -->
+    <section id="contact" class="section">
+      <h2>Book a shoot</h2>
+      <form class="form" action="#contact" method="post">
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="shoot">Shoot type</label>
+          <select id="shoot" name="shoot" required>
+            <option value="" disabled selected>Choose one</option>
+            <option>Portrait</option>
+            <option>Landscape commission</option>
+            <option>Family</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button class="btn" type="submit">Send message</button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- 6. FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="#home">Amara<span>.</span>Voss</a>
+        <p>Portrait and landscape photography. Based in Dubai, available worldwide.</p>
+      </div>
+      <nav aria-label="Footer">
+        <p class="footer-title">Explore</p>
+        <ul>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Book a shoot</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="footer-title">Follow</p>
+        <ul class="social">
+          <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://behance.net" target="_blank" rel="noopener">Behance</a></li>
+          <li><a href="https://pinterest.com" target="_blank" rel="noopener">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Amara Voss Photography</p>
+      <a href="#home">Back to top &uarr;</a>
+    </div>
+  </footer>
+
+</body>
+</html>
