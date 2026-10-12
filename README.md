@@ -50,4 +50,4 @@ Checked for no horizontal scroll at 320px, 768px and 1280px.
 The booking form is front-end only and does not send data.
 
 ## Author
-[Your name], built as part of [course/group name] assessment.
+Ifadha Imran, built as part of a project.
