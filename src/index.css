@@ -10,3 +10,14 @@
   --font-heading: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem; /* sticky header height */
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
