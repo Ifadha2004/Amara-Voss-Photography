@@ -1,6 +1,6 @@
 # Amara Voss Photography
 
-A single-page photography portfolio for a fictional portrait and landscape photographer. Rebuilt from a plain HTML/CSS site (Assignment 1) using React, Vite and Tailwind CSS.
+A single-page photography portfolio for a fictional portrait and landscape photographer. Rebuilt from a plain HTML/CSS site using React, Vite and Tailwind CSS.
 
 ## Features
 - Sticky header with navigation and a "Book a shoot" button
