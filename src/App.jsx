@@ -3,6 +3,7 @@ import Hero from "./components/Hero"
 import About from "./components/About"
 import Footer from "./components/Footer"
 import Gallery from "./components/Gallery"
+import Contact from "./components/Contact"
 
 function App() {
   return (
@@ -10,10 +11,9 @@ function App() {
       <Header />
       <main>
         <Hero />
-        {/* Gallery goes here next */}
         <Gallery />
         <About />
-        {/* Contact goes here later */}
+        <Contact />
       </main>
       <Footer />
     </>
