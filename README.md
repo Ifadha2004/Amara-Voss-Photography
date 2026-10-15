@@ -1,70 +1,60 @@
 # Amara Voss Photography
 
-A single-page portfolio website for a fictional portrait and landscape photographer, built with plain HTML5 and CSS3 (no frameworks).
-
-**Live site:** [add your GitHub Pages link here, or delete this line]
+A single-page photography portfolio for a fictional portrait and landscape photographer. Rebuilt from a plain HTML/CSS site (Assignment 1) using React, Vite and Tailwind CSS.
 
 ## Features
-- Sticky header with navigation and a "Book a shoot" button (shortened to "Book" on phones)
+- Sticky header with navigation and a "Book a shoot" button
 - Hero section with the page's single `<h1>`
-- Image gallery in CSS Grid, every image cropped with `object-fit: cover`
-  - 1 column on phones, 2 from 600px, 3 from 1024px
-- Short about section (Flexbox)
-- Booking form with name, email, shoot type and message (Flexbox)
-- Footer with links and social links (Grid and Flexbox)
-- Smooth scrolling, hover effects, visible keyboard focus and reduced-motion support
+- Gallery of 12 photos in a responsive grid (1 column on phones, 2 from `sm`, 3 from `lg`), every image cropped with `object-cover`
+- **Category filter** (All / Portrait / Landscape) built with `useState`
+- **Favourite button** on every photo, a controlled component whose state lives in `Gallery`
+- **"Saved only" toggle**, saved counter and clear button
+- **Lightbox**: click a photo to view it larger
+- Short about section
+- Booking form with controlled inputs and a thank-you message after sending
 
 ## Built with
-- HTML5 (semantic landmarks: header, nav, main, section, footer)
-- CSS3 (custom properties, Flexbox, Grid, media queries, mobile-first)
-- Google Fonts: Playfair Display (headings) and Inter (body)
+- React (Vite)
+- Tailwind CSS, with theme colours and fonts defined in `src/index.css`
+- Google Fonts: Playfair Display and Inter
+- Plain JavaScript (no TypeScript, no extra libraries)
 
-## Images
-All images are stored locally in the `images/` folder (no external image links):
-
-| File | Used for |
-|---|---|
-| `hero.jpg` | Hero background (set in `css/style.css`) |
-| `about.jpg` | About section photo |
-| `gallery-01.jpg` to `gallery-12.jpg` | Gallery grid |
-
-Photos are free-to-use images from [Unsplash](https://unsplash.com) / [Pexels](https://pexels.com).
-Photo credits: [add photographer names and links here]
-
-Images were resized to about 1000-1600px wide to keep the page fast.
-
-## Design
-| Role | Colour |
-|---|---|
-| Background | `#111111` |
-| Surface | `#1c1c1c` |
-| Text | `#f2f2f2` |
-| Muted text | `#9a9a9a` |
-| Accent | `#d4a373` |
+## How state works
+| State | Where | Purpose |
+|---|---|---|
+| `category` | `Gallery.jsx` | Which category filter is active |
+| `favourites` | `Gallery.jsx` | Ids of saved photos, passed down to each `FavouriteButton` |
+| `showSavedOnly` | `Gallery.jsx` | Whether to show only saved photos |
+| `selectedPhoto` | `Gallery.jsx` | The photo open in the lightbox (`null` = closed) |
+| `form`, `submitted` | `Contact.jsx` | Form field values and the thank-you state |
 
 ## Project structure
 ```
-photography_portfolio/
-├── index.html
-├── css/
-│   └── style.css
-├── images/
-│   ├── hero.jpg
-│   ├── about.jpg
-│   └── gallery-01.jpg ... gallery-12.jpg
-└── README.md
+src/
+├── App.jsx
+├── main.jsx
+├── index.css
+├── data/photos.js        (single source of truth for the gallery)
+└── components/
+    ├── Header.jsx  Hero.jsx  Gallery.jsx  PhotoCard.jsx
+    ├── CategoryFilter.jsx  FavouriteButton.jsx  Lightbox.jsx
+    └── About.jsx  Contact.jsx  Footer.jsx
+public/images/            (local photos)
 ```
 
 ## Run locally
-1. Clone the repo: `git clone [your repo URL]`
-2. Open `index.html` in a browser.
-
-## Responsive testing
-Checked for no horizontal scroll at 320px, 768px and 1280px.
+```bash
+git clone [your repo URL]
+cd [repo folder]
+npm install
+npm run dev
+```
 
 ## Notes
-- The booking form is front-end only and does not send data.
-- Based on feedback from the assessment session, images were moved from external URLs to a local `images/` folder.
+- The booking form is front-end only and does not send data. A backend comes later.
+- State is held in memory, so saved favourites reset when the page reloads.
+- Photos are free-to-use images from [Unsplash / Pexels]. Credits: [add photographer names].
+- The original HTML/CSS version is preserved under the `assignment-1` tag.
 
 ## Author
-Ifadha Imran, built as part of Group D3.
+Ifadha Imran
