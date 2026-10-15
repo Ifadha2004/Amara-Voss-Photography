@@ -2,11 +2,13 @@ import { useState } from "react"
 import { photos, categories } from "../data/photos"
 import CategoryFilter from "./CategoryFilter"
 import PhotoCard from "./PhotoCard"
+import Lightbox from "./Lightbox"
 
 function Gallery() {
   const [category, setCategory] = useState("All")
   const [favourites, setFavourites] = useState([])
   const [showSavedOnly, setShowSavedOnly] = useState(false)
+  const [selectedPhoto, setSelectedPhoto] = useState(null)
 
   const categoryPhotos =
     category === "All"
@@ -75,9 +77,17 @@ function Gallery() {
               photo={photo}
               isFavourite={favourites.includes(photo.id)}
               onToggleFavourite={() => toggleFavourite(photo.id)}
+              onOpen={() => setSelectedPhoto(photo)}
             />
           ))}
         </div>
+      )}
+
+      {selectedPhoto && (
+        <Lightbox
+          photo={selectedPhoto}
+          onClose={() => setSelectedPhoto(null)}
+        />
       )}
     </section>
   )
