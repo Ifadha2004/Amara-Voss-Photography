@@ -6,11 +6,16 @@ import PhotoCard from "./PhotoCard"
 function Gallery() {
   const [category, setCategory] = useState("All")
   const [favourites, setFavourites] = useState([])
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
 
-  const visiblePhotos =
+  const categoryPhotos =
     category === "All"
       ? photos
       : photos.filter((photo) => photo.category === category)
+
+  const visiblePhotos = showSavedOnly
+    ? categoryPhotos.filter((photo) => favourites.includes(photo.id))
+    : categoryPhotos
 
   function toggleFavourite(id) {
     setFavourites(
@@ -30,8 +35,20 @@ function Gallery() {
           selected={category}
           onSelect={setCategory}
         />
-        <div className="flex items-center gap-3 text-sm text-muted" aria-live="polite">
-          <span>Saved: {favourites.length}</span>
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
+          <span aria-live="polite">Saved: {favourites.length}</span>
+          <button
+            type="button"
+            onClick={() => setShowSavedOnly(!showSavedOnly)}
+            aria-pressed={showSavedOnly}
+            className={`rounded-full border px-4 py-1.5 transition-colors ${
+              showSavedOnly
+                ? "border-accent text-accent"
+                : "border-white/15 text-muted hover:text-ink"
+            }`}
+          >
+            Saved only
+          </button>
           {favourites.length > 0 && (
             <button
               type="button"
@@ -44,16 +61,24 @@ function Gallery() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-        {visiblePhotos.map((photo) => (
-          <PhotoCard
-            key={photo.id}
-            photo={photo}
-            isFavourite={favourites.includes(photo.id)}
-            onToggleFavourite={() => toggleFavourite(photo.id)}
-          />
-        ))}
-      </div>
+      {visiblePhotos.length === 0 ? (
+        <p className="rounded-md bg-surface p-6 text-muted">
+          {showSavedOnly
+            ? "No saved photos here yet. Tap the heart on a photo to save it."
+            : "No photos in this category."}
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          {visiblePhotos.map((photo) => (
+            <PhotoCard
+              key={photo.id}
+              photo={photo}
+              isFavourite={favourites.includes(photo.id)}
+              onToggleFavourite={() => toggleFavourite(photo.id)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
