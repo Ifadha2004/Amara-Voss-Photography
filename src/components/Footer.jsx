@@ -1,5 +1,6 @@
 const exploreLinks = [
   { label: "Work", href: "#work" },
+  { label: "Events", href: "#events" },
   { label: "About", href: "#about" },
   { label: "Book a shoot", href: "#contact" },
 ]
