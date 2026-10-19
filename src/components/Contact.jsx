@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const shootTypes = ["Portrait", "Landscape commission", "Family", "Other"]
+const shootTypes = ["Portrait", "Landscape commission", "Family", "Event booking", "Other"]
 const emptyForm = { name: "", email: "", shoot: "", message: "" }
 
 const labelClass = "text-sm text-muted"
@@ -24,7 +24,10 @@ function Contact() {
 
   return (
     <section id="contact" className="mx-auto max-w-6xl px-6 py-16 lg:py-24">
-      <h2 className="mb-6 font-heading text-3xl font-bold lg:text-4xl">Book a shoot</h2>
+      <h2 className="mb-6 font-heading text-3xl font-bold lg:text-4xl">Contact</h2>
+      <p className="mb-6 max-w-[52ch] text-muted">
+        Planning a private shoot, a commission or an event booking? Send me a message.
+      </p>
 
       {submitted ? (
         <div role="status" className="max-w-2xl rounded-md bg-surface p-6">
