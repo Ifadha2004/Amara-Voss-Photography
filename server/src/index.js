@@ -5,6 +5,8 @@ import photosRouter from "./routes/photos.js";
 import eventsRouter from "./routes/events.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth.js";
+import favouritesRouter from "./routes/favourites.js";
+import bookingsRouter from "./routes/bookings.js";
 
 const app = express();
 
@@ -15,6 +17,8 @@ app.use(express.json());   // lets our own routes read JSON request bodies
 
 app.use("/api/photos", photosRouter);
 app.use("/api/events", eventsRouter);
+app.use("/api/favourites", favouritesRouter);
+app.use("/api/bookings", bookingsRouter);
 
 // Health check: proves the server is up AND can talk to the database
 app.get("/api/health", async (req, res) => {

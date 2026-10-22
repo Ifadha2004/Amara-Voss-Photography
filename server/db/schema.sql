@@ -24,3 +24,21 @@ CREATE TABLE IF NOT EXISTS events (
   image        TEXT NOT NULL,
   description  TEXT NOT NULL
 );
+
+-- Which photos each user has saved
+CREATE TABLE IF NOT EXISTS favourites (
+  user_id    TEXT    NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  photo_id   INTEGER NOT NULL REFERENCES photos(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, photo_id)          -- a photo can only be saved once per user
+);
+
+-- Seats a user has reserved at an event (one booking per user per event)
+CREATE TABLE IF NOT EXISTS bookings (
+  id         SERIAL PRIMARY KEY,
+  user_id    TEXT    NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  event_id   INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  seats      INTEGER NOT NULL CHECK (seats > 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, event_id)
+);

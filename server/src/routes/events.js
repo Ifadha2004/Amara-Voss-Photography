@@ -7,13 +7,15 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, title, type, weekday, day, month, time, duration, location,
-              price, capacity,
-              already_booked AS "alreadyBooked",
-              capacity - already_booked AS "spotsLeft",
-              image, description
-       FROM events
-       ORDER BY id`
+      `SELECT e.id, e.title, e.type, e.weekday, e.day, e.month, e.time, e.duration,
+              e.location, e.price, e.capacity,
+              e.already_booked AS "alreadyBooked",
+              e.capacity - e.already_booked - COALESCE(SUM(b.seats), 0)::int AS "spotsLeft",
+              e.image, e.description
+       FROM events e
+       LEFT JOIN bookings b ON b.event_id = e.id
+       GROUP BY e.id
+       ORDER BY e.id`
     );
     res.json(result.rows);
   } catch (error) {
