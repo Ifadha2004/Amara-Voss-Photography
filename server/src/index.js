@@ -3,8 +3,16 @@ import express from "express";
 import { pool } from "./db.js";
 import photosRouter from "./routes/photos.js";
 import eventsRouter from "./routes/events.js";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./auth.js";
 
 const app = express();
+
+// Better Auth reads the raw request itself, so it must come BEFORE express.json()
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use(express.json());   // lets our own routes read JSON request bodies
+
 app.use("/api/photos", photosRouter);
 app.use("/api/events", eventsRouter);
 
