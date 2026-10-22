@@ -1,8 +1,12 @@
 import "dotenv/config";
 import express from "express";
 import { pool } from "./db.js";
+import photosRouter from "./routes/photos.js";
+import eventsRouter from "./routes/events.js";
 
 const app = express();
+app.use("/api/photos", photosRouter);
+app.use("/api/events", eventsRouter);
 
 // Health check: proves the server is up AND can talk to the database
 app.get("/api/health", async (req, res) => {
