@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react"
-import { fetchJson } from "../lib/api"
+import { authClient } from "../lib/auth-client"
+import { fetchJson, sendJson } from "../lib/api"
 import CategoryFilter from "./CategoryFilter"
 import PhotoCard from "./PhotoCard"
 import Lightbox from "./Lightbox"
 
 function Gallery() {
+  const { data: session } = authClient.useSession()
+  const userId = session?.user?.id
+
   // data from the API
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [attempt, setAttempt] = useState(0)
 
-  // UI state (unchanged from Week 2)
+  // UI state
   const [category, setCategory] = useState("All")
   const [favourites, setFavourites] = useState([])
   const [showSavedOnly, setShowSavedOnly] = useState(false)
   const [selectedPhoto, setSelectedPhoto] = useState(null)
+  const [notice, setNotice] = useState("")
 
-  // Runs after the first render (and again when `attempt` changes): ask the API for photos.
   useEffect(() => {
     let ignore = false
     fetchJson("/api/photos")
@@ -31,9 +35,25 @@ function Gallery() {
         if (!ignore) setLoading(false)
       })
     return () => {
-      ignore = true // if the component disappears first, don't set state on it
+      ignore = true
     }
   }, [attempt])
+
+  // When a user is signed in, load THEIR saved photos from the database.
+  useEffect(() => {
+    if (!userId) return
+    let ignore = false
+    fetchJson("/api/favourites")
+      .then((ids) => {
+        if (!ignore) setFavourites(ids)
+      })
+      .catch(() => {
+        if (!ignore) setNotice("Couldn't load your saved photos.")
+      })
+    return () => {
+      ignore = true
+    }
+  }, [userId])
 
   function retry() {
     setError("")
@@ -41,7 +61,9 @@ function Gallery() {
     setAttempt(attempt + 1)
   }
 
-  // Derived from the loaded data, not stored
+  // Signed out means nothing is saved, whatever is left in state
+  const myFavourites = userId ? favourites : []
+
   const categories = ["All", ...new Set(photos.map((photo) => photo.category))]
 
   const categoryPhotos =
@@ -50,15 +72,39 @@ function Gallery() {
       : photos.filter((photo) => photo.category === category)
 
   const visiblePhotos = showSavedOnly
-    ? categoryPhotos.filter((photo) => favourites.includes(photo.id))
+    ? categoryPhotos.filter((photo) => myFavourites.includes(photo.id))
     : categoryPhotos
 
-  function toggleFavourite(id) {
-    setFavourites(
-      favourites.includes(id)
-        ? favourites.filter((favId) => favId !== id)
-        : [...favourites, id]
-    )
+  async function toggleFavourite(id) {
+    if (!userId) {
+      setNotice("Sign in (top right) to save photos.")
+      return
+    }
+    setNotice("")
+    const previous = favourites
+    const isSaved = favourites.includes(id)
+
+    // 1. update the screen straight away
+    setFavourites(isSaved ? favourites.filter((favId) => favId !== id) : [...favourites, id])
+
+    // 2. save it in the database; undo the screen change if that fails
+    try {
+      await sendJson(`/api/favourites/${id}`, isSaved ? "DELETE" : "PUT")
+    } catch {
+      setFavourites(previous)
+      setNotice("Couldn't save that change. Please try again.")
+    }
+  }
+
+  async function clearFavourites() {
+    const previous = favourites
+    setFavourites([])
+    try {
+      await sendJson("/api/favourites", "DELETE")
+    } catch {
+      setFavourites(previous)
+      setNotice("Couldn't clear your saved photos. Please try again.")
+    }
   }
 
   return (
@@ -83,7 +129,7 @@ function Gallery() {
               onSelect={setCategory}
             />
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
-              <span aria-live="polite">Saved: {favourites.length}</span>
+              <span aria-live="polite">Saved: {myFavourites.length}</span>
               <button
                 type="button"
                 onClick={() => setShowSavedOnly(!showSavedOnly)}
@@ -96,10 +142,10 @@ function Gallery() {
               >
                 Saved only
               </button>
-              {favourites.length > 0 && (
+              {myFavourites.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setFavourites([])}
+                  onClick={clearFavourites}
                   className="text-accent hover:underline"
                 >
                   Clear
@@ -107,6 +153,10 @@ function Gallery() {
               )}
             </div>
           </div>
+
+          {notice && (
+            <p className="mb-4 text-sm text-accent" role="status">{notice}</p>
+          )}
 
           {visiblePhotos.length === 0 ? (
             <p className="rounded-md bg-surface p-6 text-muted">
@@ -120,7 +170,7 @@ function Gallery() {
                 <PhotoCard
                   key={photo.id}
                   photo={photo}
-                  isFavourite={favourites.includes(photo.id)}
+                  isFavourite={myFavourites.includes(photo.id)}
                   onToggleFavourite={() => toggleFavourite(photo.id)}
                   onOpen={() => setSelectedPhoto(photo)}
                 />

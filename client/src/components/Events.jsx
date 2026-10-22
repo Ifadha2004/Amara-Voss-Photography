@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react"
-import { fetchJson } from "../lib/api"
+import { authClient } from "../lib/auth-client"
+import { fetchJson, sendJson } from "../lib/api"
 import CategoryFilter from "./CategoryFilter"
 import EventCard from "./EventCard"
 import BookingSummary from "./BookingSummary"
 
 function Events() {
+  const { data: session } = authClient.useSession()
+  const userId = session?.user?.id
+
   // data from the API
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [attempt, setAttempt] = useState(0)
+  const [version, setVersion] = useState(0)   // bump this to reload from the server
 
-  // UI state (bookings move to the server in Phase 7)
+  // UI state
   const [eventType, setEventType] = useState("All")
-  const [bookings, setBookings] = useState({})
+  const [bookings, setBookings] = useState({})   // { eventId: seats } for the signed-in user
+  const [notice, setNotice] = useState("")
 
   useEffect(() => {
     let ignore = false
@@ -30,13 +35,32 @@ function Events() {
     return () => {
       ignore = true
     }
-  }, [attempt])
+  }, [version])
+
+  useEffect(() => {
+    if (!userId) return
+    let ignore = false
+    fetchJson("/api/bookings")
+      .then((list) => {
+        if (!ignore) {
+          setBookings(Object.fromEntries(list.map((b) => [b.eventId, b.seats])))
+        }
+      })
+      .catch(() => {
+        if (!ignore) setNotice("Couldn't load your bookings.")
+      })
+    return () => {
+      ignore = true
+    }
+  }, [userId, version])
 
   function retry() {
     setError("")
     setLoading(true)
-    setAttempt(attempt + 1)
+    setVersion(version + 1)
   }
+
+  const myBookings = userId ? bookings : {}
 
   const eventTypes = ["All", ...new Set(events.map((event) => event.type))]
 
@@ -46,22 +70,36 @@ function Events() {
       : events.filter((event) => event.type === eventType)
 
   const bookedItems = events
-    .filter((event) => bookings[event.id])
-    .map((event) => ({ event, seats: bookings[event.id] }))
+    .filter((event) => myBookings[event.id])
+    .map((event) => ({ event, seats: myBookings[event.id] }))
 
   const total = bookedItems.reduce(
     (sum, item) => sum + item.seats * item.event.price,
     0
   )
 
-  function bookEvent(id, seats) {
-    setBookings({ ...bookings, [id]: seats })
+  async function bookEvent(id, seats) {
+    if (!userId) {
+      setNotice("Sign in (top right) to reserve spots.")
+      return
+    }
+    setNotice("")
+    try {
+      await sendJson("/api/bookings", "POST", { eventId: id, seats })
+    } catch (err) {
+      setNotice(err.message)   // e.g. "Only 2 spots left"
+    }
+    setVersion((v) => v + 1)   // reload events and bookings either way
   }
 
-  function cancelBooking(id) {
-    const remaining = { ...bookings }
-    delete remaining[id]
-    setBookings(remaining)
+  async function cancelBooking(id) {
+    setNotice("")
+    try {
+      await sendJson(`/api/bookings/${id}`, "DELETE")
+    } catch (err) {
+      setNotice(err.message)
+    }
+    setVersion((v) => v + 1)
   }
 
   return (
@@ -91,12 +129,16 @@ function Events() {
             />
           </div>
 
+          {notice && (
+            <p className="mb-4 text-sm text-accent" role="status">{notice}</p>
+          )}
+
           <div className="flex flex-col gap-4">
             {visibleEvents.map((event) => (
               <EventCard
                 key={event.id}
                 event={event}
-                mySeats={bookings[event.id] ?? 0}
+                mySeats={myBookings[event.id] ?? 0}
                 onBook={bookEvent}
                 onCancel={cancelBooking}
               />
