@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS events (
   location     TEXT NOT NULL,
   price        INTEGER NOT NULL CHECK (price >= 0),     -- AED per spot
   capacity     INTEGER NOT NULL CHECK (capacity > 0),   -- total spots
+  already_booked INTEGER NOT NULL DEFAULT 0 CHECK (already_booked >= 0),  -- seats taken offline
   image        TEXT NOT NULL,
   description  TEXT NOT NULL
 );
