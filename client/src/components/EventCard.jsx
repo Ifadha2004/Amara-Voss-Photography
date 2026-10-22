@@ -4,7 +4,7 @@ import SpotStepper from "./SpotStepper"
 function EventCard({ event, mySeats, onBook, onCancel }) {
   const [quantity, setQuantity] = useState(1)
 
-  const spotsLeft = event.capacity - event.booked - mySeats
+  const spotsLeft = event.capacity - event.alreadyBooked - mySeats
   const isBooked = mySeats > 0
   const isSoldOut = spotsLeft === 0 && !isBooked
   const filledPercent = Math.round(((event.capacity - spotsLeft) / event.capacity) * 100)
