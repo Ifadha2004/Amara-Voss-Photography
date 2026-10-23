@@ -3,7 +3,7 @@ function About() {
     <section id="about" className="mx-auto max-w-6xl px-6 py-16 lg:py-24">
       <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
         <img
-          src="/images/about.jpg"
+          src="/images/about.webp"
           alt="Portrait of photographer Amara Voss holding a camera"
           className="aspect-square w-full rounded-md object-cover sm:w-[45%]"
         />

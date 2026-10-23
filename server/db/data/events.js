@@ -14,7 +14,7 @@ export const events = [
     price: 180,
     capacity: 12,
     booked: 7,
-    image: "/images/events/street-walk.jpg",
+    image: "/images/events/street-walk.webp",
     description:
       "Wander the lanes and wind towers of Bur Dubai and learn to frame light, shadow and everyday moments.",
   },
@@ -31,7 +31,7 @@ export const events = [
     price: 350,
     capacity: 8,
     booked: 5,
-    image: "/images/events/dunes-portraits.jpeg",
+    image: "/images/events/dunes-portraits.webp",
     description:
       "Pose, direct and light a portrait session as the sun drops. Bring your own camera or phone.",
   },
@@ -48,7 +48,7 @@ export const events = [
     price: 220,
     capacity: 10,
     booked: 10,
-    image: "/images/events/mangrove-walk.jpeg",
+    image: "/images/events/mangrove-walk.webp",
     description:
       "A quiet early walk along the water, tracking birds and soft morning light with a telephoto lens.",
   },
@@ -65,7 +65,7 @@ export const events = [
     price: 280,
     capacity: 10,
     booked: 8,
-    image: "/images/events/skyline-workshop.jpeg",
+    image: "/images/events/skyline-workshop.webp",
     description:
       "Tripod, long exposures and city lights. You will leave with a sharp skyline frame and the settings behind it.",
   },
@@ -82,7 +82,7 @@ export const events = [
     price: 150,
     capacity: 14,
     booked: 3,
-    image: "/images/events/creek-sunrise.jpeg",
+    image: "/images/events/creek-sunrise.webp",
     description:
       "Catch the dhows and the first light on the water, then compare shots over karak chai.",
   },
@@ -99,7 +99,7 @@ export const events = [
     price: 260,
     capacity: 8,
     booked: 2,
-    image: "/images/events/desert-dawn.jpeg",
+    image: "/images/events/desert-dawn.webp",
     description:
       "Track gazelles and oryx across the dunes at first light. Long lenses welcome, patience required.",
   },
