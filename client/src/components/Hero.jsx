@@ -5,7 +5,7 @@ function Hero() {
       className="flex min-h-[70vh] items-center bg-cover bg-center px-6 py-16"
       style={{
         backgroundImage:
-          "linear-gradient(to right, rgba(17,17,17,0.92), rgba(17,17,17,0.45)), url('/images/hero.jpg')",
+          "linear-gradient(to right, rgba(17,17,17,0.92), rgba(17,17,17,0.45)), url('/images/hero.webp')",
       }}
     >
       <div className="mx-auto w-full max-w-6xl">
