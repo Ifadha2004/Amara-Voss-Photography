@@ -19,62 +19,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST /api/bookings  { eventId, seats } -> reserve seats
-router.post("/", async (req, res) => {
-  const eventId = Number(req.body?.eventId);
-  const seats = Number(req.body?.seats);
-
-  if (!Number.isInteger(eventId) || !Number.isInteger(seats) || seats < 1) {
-    return res.status(400).json({ error: "eventId and seats must be whole numbers (seats at least 1)" });
-  }
-
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
-
-    // FOR UPDATE locks this event row until we finish, so two people
-    // booking the last spots at the same moment can't both succeed.
-    const eventResult = await client.query(
-      "SELECT capacity, already_booked FROM events WHERE id = $1 FOR UPDATE",
-      [eventId]
-    );
-    if (eventResult.rowCount === 0) {
-      await client.query("ROLLBACK");
-      return res.status(404).json({ error: "Event not found" });
-    }
-    const { capacity, already_booked } = eventResult.rows[0];
-
-    // seats other people have booked on the site (not mine, since mine gets replaced)
-    const takenResult = await client.query(
-      `SELECT COALESCE(SUM(seats), 0)::int AS taken
-       FROM bookings WHERE event_id = $1 AND user_id <> $2`,
-      [eventId, req.user.id]
-    );
-    const spotsLeft = capacity - already_booked - takenResult.rows[0].taken;
-
-    if (seats > spotsLeft) {
-      await client.query("ROLLBACK");
-      return res.status(409).json({
-        error: spotsLeft === 0 ? "Sorry, this event is fully booked" : `Only ${spotsLeft} spots left`,
-      });
-    }
-
-    await client.query(
-      `INSERT INTO bookings (user_id, event_id, seats) VALUES ($1, $2, $3)
-       ON CONFLICT (user_id, event_id) DO UPDATE SET seats = EXCLUDED.seats`,
-      [req.user.id, eventId, seats]
-    );
-
-    await client.query("COMMIT");
-    res.status(201).json({ eventId, seats });
-  } catch (error) {
-    await client.query("ROLLBACK");
-    console.error(error);
-    res.status(500).json({ error: "Could not save booking" });
-  } finally {
-    client.release();
-  }
-});
+// Purchases must now go through Stripe; clients cannot create free reservations.
+router.post("/", (req, res) => res.status(410).json({ error: "Use checkout to book and pay" }));
 
 // DELETE /api/bookings/3 -> cancel my booking for event 3
 router.delete("/:eventId", async (req, res) => {
