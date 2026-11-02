@@ -10,7 +10,10 @@ router.get("/", async (req, res) => {
       `SELECT e.id, e.title, e.type, e.weekday, e.day, e.month, e.time, e.duration,
               e.location, e.price, e.capacity,
               e.already_booked AS "alreadyBooked",
-              e.capacity - e.already_booked - COALESCE(SUM(b.seats), 0)::int AS "spotsLeft",
+              GREATEST(0, e.capacity - e.already_booked - COALESCE(SUM(b.seats), 0)::int -
+                (SELECT COALESCE(SUM(i.quantity),0)::int FROM order_items i
+                 JOIN orders o ON o.id=i.order_id WHERE i.event_id=e.id
+                 AND o.status IN ('pending','paid'))) AS "spotsLeft",
               e.image, e.description
        FROM events e
        LEFT JOIN bookings b ON b.event_id = e.id

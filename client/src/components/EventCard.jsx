@@ -1,7 +1,7 @@
 import { useState } from "react"
 import SpotStepper from "./SpotStepper"
 
-function EventCard({ event, mySeats, onBook, onCancel }) {
+function EventCard({ event, mySeats, onBook, onCancel, checkingOut }) {
   const [quantity, setQuantity] = useState(1)
 
   const spotsLeft = event.spotsLeft
@@ -97,10 +97,11 @@ function EventCard({ event, mySeats, onBook, onCancel }) {
             />
             <button
               type="button"
+              disabled={checkingOut}
               onClick={() => onBook(event.id, seats)}
               className="rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-canvas hover:brightness-110"
             >
-              Reserve, AED {seats * event.price}
+              {checkingOut ? "Opening checkout…" : `Book and pay, AED ${seats * event.price}`}
             </button>
           </div>
         )}

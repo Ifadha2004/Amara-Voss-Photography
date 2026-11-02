@@ -17,6 +17,13 @@ A full-stack portfolio site for a fictional street, landscape and portrait photo
 | Auth | Better Auth (email and password, cookie sessions) |
 | Hosting | Vercel (client), Render (server), Neon (database) |
 
+## Stripe test payments
+
+See [the complete setup and assessment walkthrough](docs/STRIPE_SETUP.md).
+Event purchases use authenticated Stripe Checkout, immutable database price snapshots,
+a verified webhook and a polling confirmation page. Apply `npm run db:payments`
+in `server/` before running the updated app. Keep Stripe test keys on the server.
+
 ## Features
 
 - Gallery filtered by category (`useState`), favourites, a "Saved only" view and a lightbox
@@ -72,9 +79,11 @@ The browser only ever talks to the Vercel address. `client/vercel.json` forwards
 | `photos` | The gallery: title, category, image path, alt text |
 | `events` | Photo walks and workshops: date, place, price, capacity, and `already_booked` for seats taken before the site existed |
 | `favourites` | A user saved a photo. Primary key on `(user_id, photo_id)` so a photo can only be saved once |
-| `bookings` | A user reserved seats at an event. One row per user per event |
+| `bookings` | Legacy unpaid reservations; new reservations use checkout |
+| `orders` | One purchase: user, total in fils, status, Stripe session and timestamps |
+| `order_items` | Immutable event title, quantity and unit price for a purchase |
 
-Spots left is never stored. It is calculated in SQL as `capacity - already_booked - SUM(bookings.seats)`, so it cannot go out of date.
+Spots left is calculated from capacity minus offline seats, legacy bookings, and order items on pending or paid orders. Signed Stripe expiry events release unpaid checkout holds.
 
 ## Authentication
 
@@ -95,7 +104,10 @@ Spots left is never stored. It is calculated in SQL as `capacity - already_booke
 | `PUT` / `DELETE /api/favourites/:photoId` | yes | Save or unsave a photo |
 | `DELETE /api/favourites` | yes | Clear all my saved photos |
 | `GET /api/bookings` | yes | My bookings |
-| `POST /api/bookings` | yes | Reserve seats (capacity is re-checked in a transaction) |
+| `POST /api/bookings` | yes | Disabled (410); use Stripe checkout |
+| `POST /api/checkout` | yes | Create a server-priced order and hosted Checkout session |
+| `GET /api/orders/:id` | yes | Read an order owned by the signed-in user |
+| `POST /api/webhooks/stripe` | signature | Verify payment or expiry; sole paid-status writer |
 | `DELETE /api/bookings/:eventId` | yes | Cancel my booking |
 | `/api/auth/*` | – | Sign up, sign in, sign out, session (Better Auth) |
 

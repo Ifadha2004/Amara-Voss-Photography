@@ -8,7 +8,15 @@ import { auth } from "./auth.js";
 import favouritesRouter from "./routes/favourites.js";
 import bookingsRouter from "./routes/bookings.js";
 
+import checkoutRouter from "./routes/checkout.js";
+import ordersRouter from "./routes/orders.js";
+
+import { stripeWebhook } from "./routes/webhook.js";
+
 const app = express();
+
+// Signature verification needs exact bytes, BEFORE the global JSON parser.
+app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), stripeWebhook);
 
 // Better Auth reads the raw request itself, so it must come BEFORE express.json()
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -20,6 +28,9 @@ app.use("/api/events", eventsRouter);
 app.use("/api/favourites", favouritesRouter);
 app.use("/api/bookings", bookingsRouter);
 
+app.use("/api/checkout", checkoutRouter);
+app.use("/api/orders", ordersRouter);
+
 // Health check: proves the server is up AND can talk to the database
 app.get("/api/health", async (req, res) => {
   try {
@@ -29,6 +40,12 @@ app.get("/api/health", async (req, res) => {
     console.error(error);
     res.status(500).json({ status: "error", message: "Database connection failed" });
   }
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  console.error("Request failed:", error.message);
+  res.status(error.status === 400 ? 400 : 500).json({ error: "Request could not be completed" });
 });
 
 const port = process.env.PORT || 3000;
