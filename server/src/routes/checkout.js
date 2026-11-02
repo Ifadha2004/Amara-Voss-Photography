@@ -50,7 +50,7 @@ router.post("/", async (req, res) => {
   }
   try {
     const session = await stripe.checkout.sessions.create({
-      mode: "payment", payment_method_types: ["card"],
+      mode: "payment",
       client_reference_id: orderId, metadata: { orderId },
       customer_email: req.user.email,
       line_items: [{ price_data: { currency: "aed", unit_amount: event.price * 100,
@@ -67,7 +67,13 @@ router.post("/", async (req, res) => {
     if (error.type === "StripeInvalidRequestError" || error.type === "StripeAuthenticationError") {
       await pool.query("UPDATE orders SET status='failed' WHERE id=$1 AND status='pending'", [orderId]);
     }
-    console.error("Checkout session creation failed", { orderId, type: error.type });
+    console.error("Checkout session creation failed", {
+      orderId,
+      type: error.type,
+      message: error.message,
+      code: error.code,
+      param: error.param,
+    });
     res.status(502).json({ error: "Checkout could not start. Please contact us before retrying.", orderId });
   }
 });
