@@ -19,6 +19,7 @@ function Events() {
   const [eventType, setEventType] = useState("All")
   const [bookings, setBookings] = useState({})   // { eventId: seats } for the signed-in user
   const [notice, setNotice] = useState("")
+  const [checkingOut, setCheckingOut] = useState(false)
 
   useEffect(() => {
     let ignore = false
@@ -80,16 +81,20 @@ function Events() {
 
   async function bookEvent(id, seats) {
     if (!userId) {
-      setNotice("Sign in (top right) to reserve spots.")
+      setNotice("Sign in (top right) to book and pay.")
       return
     }
+    if (checkingOut) return
     setNotice("")
+    setCheckingOut(true)
     try {
-      await sendJson("/api/bookings", "POST", { eventId: id, seats })
+      const { url } = await sendJson("/api/checkout", "POST", { eventId: id, seats })
+      window.location.assign(url)
     } catch (err) {
-      setNotice(err.message)   // e.g. "Only 2 spots left"
+      setNotice(err.message)
+      setCheckingOut(false)
+      setVersion((v) => v + 1)
     }
-    setVersion((v) => v + 1)   // reload events and bookings either way
   }
 
   async function cancelBooking(id) {
@@ -140,6 +145,7 @@ function Events() {
                 event={event}
                 mySeats={myBookings[event.id] ?? 0}
                 onBook={bookEvent}
+                checkingOut={checkingOut}
                 onCancel={cancelBooking}
               />
             ))}

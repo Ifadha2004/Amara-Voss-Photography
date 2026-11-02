@@ -1,7 +1,7 @@
 function BookingSummary({ items, total, onCancel }) {
   return (
     <div className="mt-8 rounded-md border border-accent/40 bg-surface p-6" aria-live="polite">
-      <h3 className="mb-2 font-heading text-xl font-bold">Your bookings</h3>
+      <h3 className="mb-2 font-heading text-xl font-bold">Your previous reservations</h3>
 
       <ul className="divide-y divide-white/10">
         {items.map(({ event, seats }) => (
@@ -38,7 +38,7 @@ function BookingSummary({ items, total, onCancel }) {
         <a href="#contact" className="text-accent hover:underline">
           Send me a message
         </a>{" "}
-        to confirm your spots.
+        about these reservations. New bookings are paid through Stripe.
       </p>
     </div>
   )
