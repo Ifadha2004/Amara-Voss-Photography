@@ -11,7 +11,12 @@ import bookingsRouter from "./routes/bookings.js";
 import checkoutRouter from "./routes/checkout.js";
 import ordersRouter from "./routes/orders.js";
 
+import { stripeWebhook } from "./routes/webhook.js";
+
 const app = express();
+
+// Signature verification needs exact bytes, BEFORE the global JSON parser.
+app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), stripeWebhook);
 
 // Better Auth reads the raw request itself, so it must come BEFORE express.json()
 app.all("/api/auth/*splat", toNodeHandler(auth));
